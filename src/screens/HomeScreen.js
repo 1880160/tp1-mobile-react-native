@@ -2,16 +2,19 @@ import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
 export default function HomeScreen({ navigation }) {
-return (
-<View style={styles.container}>
-<Text style={styles.title}>Accueil</Text>
-<Button title="Aller aux Détails" onPress={() =>
-navigation.navigate('Details')} />
-<View style={{ height: 12 }} />
-<Button title="Voir le Compteur" onPress={() =>
-navigation.navigate('Counter')} />
-</View>
-);
+    return (
+    <View style={styles.container}>
+    <Text style={styles.title}>Accueil</Text>
+        <Button title="Aller aux Détails" onPress={() =>
+        navigation.navigate('Details')} />
+    <View style={{ height: 12 }} />
+        <Button title="Voir le Compteur" onPress={() =>
+        navigation.navigate('Counter')} />
+    <View style={{ height: 12 }} />
+        <Button title="Voir la battery" onPress={() =>
+        navigation.navigate('Battery')} />
+    </View>
+    );
 }
 
 const styles = StyleSheet.create({

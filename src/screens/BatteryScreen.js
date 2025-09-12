@@ -1,17 +1,22 @@
 import React from 'react';
+import { useBatteryLevel } from 'expo-battery';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function DetailsScreen() {
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Écran Détails</Text>
-      <Text style={styles.text}>
-        Voici un écran poussé via la navigation de type Stack.
-      </Text>
-    </View>
-  );
+// https://docs.expo.dev/versions/latest/sdk/battery/
+
+export default function BatteryScreen(){
+    const batteryLevel = useBatteryLevel();
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>{batteryLevel}</Text>
+        </View>
+    );
 }
+
+
+
+
 
 const styles = StyleSheet.create({
   container: { 

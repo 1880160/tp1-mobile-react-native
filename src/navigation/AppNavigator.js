@@ -7,6 +7,7 @@ import HomeScreen from '../screens/HomeScreen';
 import DetailsScreen from '../screens/DetailsScreen';
 import CounterScreen from '../screens/CounterScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import BatteryScreen from '../screens/BatteryScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -28,6 +29,11 @@ function Tabs() {
         name="Settings" 
         component={SettingsScreen} 
         options={{ title: 'Paramètres' }} 
+      />
+      <Tab.Screen 
+        name="Battery" 
+        component={BatteryScreen} 
+        options={{ title: 'Batterie' }} 
       />
     </Tab.Navigator>
   );
