@@ -10,7 +10,8 @@
 # docker-compose build --no-cache development
 
 # Stage 1 - Base: General Configuration
-FROM node:24.7-alpine AS base
+# FROM node:24.7-alpine AS base
+FROM node:bookworm-slim AS base
 WORKDIR /usr/src/app
 
 # Environment setup and global tools installation
@@ -18,10 +19,25 @@ ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=/home/node/.npm-global/bin:$PATH
 
 # Install necessary tools and global npm packages
-RUN apk add --no-cache bash git \
+# RUN apk add --no-cache bash git \
+#     && npm i --unsafe-perm -g npm@latest expo-cli@latest ngrok \
+#     && apk add android-tools \
+#     && apk del git
+RUN yarn add bash git \
     && npm i --unsafe-perm -g npm@latest expo-cli@latest \
-    && apk add android-tools \
-    && apk del git
+    && yarn add @expo/ngrok \
+    && yarn remove git
+
+WORKDIR /home
+
+RUN apt update -y && apt upgrade
+RUN yes | apt install wget unzip
+RUN yes | apt install openjdk-17-jdk
+RUN wget https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip
+RUN unzip commandlinetools-linux-13114758_latest.zip
+WORKDIR /home/cmdline-tools/bin
+RUN yes | ./sdkmanager  platform-tools --sdk_root='/root/Android/sdk'
+
 
 
 #This way it will connect to my host ADB server instead of creating a new one in the container.
@@ -33,23 +49,28 @@ ENV ANDROID_ADB_SERVER_ADDRESS="host.docker.internal"
 ARG REACT_NATIVE_PACKAGER_HOSTNAME
 ENV REACT_NATIVE_PACKAGER_HOSTNAME=$REACT_NATIVE_PACKAGER_HOSTNAME
 
+#development environment location
+ARG DEVELOPMENT_ENVIRONNMENT
+ENV DEVELOPMENT_ENVIRONNMENT=$DEVELOPMENT_ENVIRONNMENT
+
+
 # Stage 2 - Dependencies: Install project dependencies
 FROM base AS dependencies
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json to install dependencies
-COPY package*.json ./ 
+COPY "${DEVELOPMENT_ENVIRONNMENT}/package*.json" ./ 
 RUN npm ci expo --prefer-offline --no-audit
 
 # Copy the rest of the project files
-COPY . ./
+COPY "${DEVELOPMENT_ENVIRONNMENT}" ./
 
 # Stage 3 - Build: Compile TypeScript and prepare build artifacts
 FROM dependencies AS build
 WORKDIR /usr/src/app
 
 # Copy source code and run the build process
-COPY . ./
+COPY "${DEVELOPMENT_ENVIRONNMENT}" ./
 RUN npm run build
 
 # Stage 4 - Development: Configure development environment
@@ -58,13 +79,13 @@ WORKDIR /usr/src/app
 
 # Copy node_modules and source code from the dependencies stage
 COPY --from=dependencies /usr/src/app/node_modules ./node_modules
-COPY . ./
+COPY "${DEVELOPMENT_ENVIRONNMENT}" ./
 
 # Expose development-related ports (Expo)
-EXPOSE 19000 19001 19002 19003 19006 8081
+EXPOSE 19000 19001 19002 19003 19006
 
 # Command to start the development server
-CMD ["npx", "expo", "start", "--lan"]
+CMD ["npx", "expo", "start"]
 
 # Stage 5 - Testing: Run automated tests
 # Uncomment and configure if testing is required
