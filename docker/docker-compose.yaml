@@ -6,8 +6,9 @@ networks:
 services:
   development:
     build:
-      context: . # where dockerfile is or github link
+      context: ${DEVELOPMENT_ENVIRONNMENT} # where dockerfile is or github link
       target: development
+      dockerfile: ./docker/Dockerfile
     ports:
       - "${DEV_PORT_METRO_BUNDLER}:19000" # Main port for the Metro Bundler
       - "${DEV_PORT_WEBSOCKET}:19001"     # WebSocket for debugging
@@ -16,12 +17,11 @@ services:
       - "${DEV_PORT_DEVTOOLS}:19006"      # Expo DevTools
       - "${DEV_PORT_METRO}:8081"          # React Native development port
       - 5037:5037
-      - 5554:5554
-      - 5555:5555
+      - 5054-5056:5054-5056
     environment:
       REACT_NATIVE_PACKAGER_HOSTNAME: ${REACT_NATIVE_PACKAGER_HOSTNAME}
       EXPO_DEVTOOLS_LISTEN_ADDRESS: ${EXPO_DEVTOOLS_LISTEN_ADDRESS}
-    #   ANDROID_ADB_SERVER_ADDRESS : host.docker.internal #Adb schenanigans
+      ANDROID_ADB_SERVER_ADDRESS : ${ANDROID_ADB_SERVER_ADDRESS} #Adb schenanigans
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"  #Adb schenanigans
     volumes:
