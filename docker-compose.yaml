@@ -6,7 +6,7 @@ networks:
 services:
   development:
     build:
-      context: .
+      context: . # where dockerfile is or github link
       target: development
     ports:
       - "${DEV_PORT_METRO_BUNDLER}:19000" # Main port for the Metro Bundler
@@ -30,14 +30,14 @@ services:
       # - ./.expo:/usr/src/app/.expo
       # - ./node_modules:/usr/src/app/node_modules
       - /usr/src/app/node_modules          # Persist node_modules
-      - ./tests:/usr/src/app/tests         # Mount the tests directory
+      - ${DEVELOPMENT_ENVIRONNMENT}/tests:/usr/src/app/tests         # Mount the tests directory
     develop:
       watch:
         - action: sync
-          path: .
+          path: ${DEVELOPMENT_ENVIRONNMENT}
           target: /usr/src/app/
         - action: rebuild
-          path: ./package.json
+          path: ${DEVELOPMENT_ENVIRONNMENT}/package.json
     stdin_open: true                       # Keep stdin open for interactive processes
     tty: true                              # Allocate a pseudo-TTY
     networks:
