@@ -9,20 +9,18 @@ export default function BatteryScreen(){
     const batteryLevel = useBatteryLevel();
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{batteryLevel}</Text>
+            <Text style={styles.title}>{batteryLevel*100} %</Text>
         </View>
     );
+
 }
-
-
-
 
 
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center',
+    alignItems: 'right', 
+    justifyContent: 'upper',
     padding: 16 
   },
   title: { 
